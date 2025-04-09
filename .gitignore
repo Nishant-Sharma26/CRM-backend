@@ -1,0 +1,25 @@
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Environment variables
+.env
+
+# Temporary upload directory (from multer)
+uploads/
+
+# Logs
+*.log
+logs/
+
+# Build artifacts
+dist/
+build/
+
+# macOS system files
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
