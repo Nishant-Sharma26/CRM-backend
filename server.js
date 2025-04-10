@@ -28,9 +28,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use("/api/candidates", require("./api/candidates"));
 app.use("/api/auth", require("./api/auth"));
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK", message: "Server is running" });
-});
+
 
 // Global Error Handler
 app.use((err, req, res, next) => {
