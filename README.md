@@ -1,130 +1,73 @@
-CRM Backend
-This is the backend API for a Customer Relationship Management (CRM) system, built with Node.js and Express. It provides endpoints for user authentication, candidate management, and resume storage, integrated with MongoDB (via Mongoose), JWT, bcrypt, and Amazon S3.
+CRM Backend - Hey There!
+Hey! Welcome to the backend for my CRM project. This is the server-side piece that powers the candidate management system I’ve been working on. It’s built with Node.js and Express, and I’ve thrown in some cool stuff like MongoDB (via Mongoose), JWT for auth, bcrypt for password security, and Amazon S3 for storing resumes. Let me walk you through what it does and how to get it running!
 
-Features Implemented
-Authentication:
-Signup: POST /api/auth/signup - Registers users with email and hashed password (bcrypt), returning a JWT.
-Login: POST /api/auth/login - Authenticates users, returning a JWT if credentials match.
-JWT: Secures endpoints with token-based authentication.
-Candidate Management:
-Create: POST /api/candidates - Adds a new candidate with details (name, email, phone, job title, status, resume).
-Read: GET /api/candidates - Retrieves all candidates (protected route).
-Update Status: PUT /api/candidates/:id/status - Updates a candidate’s status (Pending, Reviewed, Hired).
-Delete: DELETE /api/candidates/:id - Removes a candidate by ID.
-Schemas: Uses Mongoose with two schemas:
-User: For authentication (email, hashed password).
-Candidate: For candidate data (name, email, phone, jobTitle, status, resumeUrl).
-Resume Storage:
-Amazon S3: Uploads candidate resumes to an S3 bucket, storing the URL in the candidate schema.
+What’s Inside (Features)
+Signup & Login:
+You can hit /api/auth/signup to create a new user with an email and password (hashed with bcrypt, of course), and it’ll give you back a JWT token. Same deal with /api/auth/login—log in and grab your token. Pretty straightforward!
+Candidate Stuff:
+Add Candidates: POST to /api/candidates with details like name, email, phone, job title, and a resume file—it’ll upload the resume to S3 and save everything.
+List Candidates: GET /api/candidates pulls all the candidates (you’ll need a token for this one).
+Update Status: PUT to /api/candidates/:id/status lets you switch a candidate’s status to Pending, Reviewed, or Hired.
+Delete: DELETE /api/candidates/:id wipes a candidate out of the system.
+I’ve got two Mongoose schemas: one for users (just email and password) and one for candidates (all the juicy details).
+
+Resume Uploads:
+Resumes go straight to an Amazon S3 bucket, and I store the URL in the candidate’s record. Keeps things tidy!
 Security:
-bcrypt: Hashes passwords before storing in MongoDB.
-JWT: Protects candidate endpoints, requiring Authorization: Bearer <token> header.
+Passwords are hashed with bcrypt, so no plain text nonsense. JWT tokens lock down the candidate routes—gotta send Authorization: Bearer <token> in the header.
 CORS:
-Configured to allow requests from http://localhost:3000 (local frontend) and https://crm-frontend-umber-rho.vercel.app (deployed frontend).
+Set up to play nice with my frontend running at http://localhost:3000 locally and https://crm-frontend-umber-rho.vercel.app when deployed.
 Health Check:
-GET /health - Returns server status for monitoring.
-Steps to Run the Project Locally
-Prerequisites
-Node.js: Version 14.x or higher.
-npm: Comes with Node.js.
-MongoDB: A running MongoDB instance (local or Atlas).
-AWS Account: For S3 access (keys and bucket setup).
-Installation
-Clone the Repository:
-bash
+Hit /health to make sure the server’s alive—it’ll say "OK" if everything’s good.
 
-Collapse
 
-Wrap
+How to Run It Locally
+Alright, here’s how to fire this thing up on your machine:
 
-Copy
+What You’ll Need
+Node.js: Grab version 14 or higher—older ones might give you grief.
+npm: Comes with Node, so you’re covered.
+MongoDB: Either run it locally or use MongoDB Atlas (I’ve got it hooked up either way).
+AWS S3: You’ll need an S3 bucket and some AWS credentials (access key, secret key).
+
+Steps
+Clone It:
+Snag the code from GitHub:
+
 git clone https://github.com/Nishant-Sharma26/CRM-backend.git
 cd CRM-backend
-Install Dependencies:
-bash
 
-Collapse
-
-Wrap
-
-Copy
 npm install
-Installs Express, Mongoose, cors, dotenv, jsonwebtoken, bcrypt, and AWS SDK (e.g., aws-sdk).
-Configure Environment:
-Create a .env file in the root directory:
-text
 
-Collapse
+Set Up the Environment
 
-Wrap
-
-Copy
-MONGO_URI=mongodb://localhost:27017/crm_db  # Or your MongoDB Atlas URI
-JWT_SECRET=your-secret-key                 # Replace with a secure key
+MONGO_URI=mongodb://localhost:27017/crm_db  # Your MongoDB connection string
+JWT_SECRET=something-super-secret           # Make this random and secure!
 ALLOWED_ORIGINS=http://localhost:3000,https://crm-frontend-umber-rho.vercel.app
-AWS_ACCESS_KEY_ID=your-aws-access-key      # From AWS IAM
-AWS_SECRET_ACCESS_KEY=your-aws-secret-key  # From AWS IAM
-AWS_S3_BUCKET=your-s3-bucket-name          # Your S3 bucket
-AWS_REGION=us-east-1                       # Your S3 region
-Replace values with your own credentials.
-Run the Application:
-bash
+AWS_ACCESS_KEY_ID=your-aws-key              # From AWS IAM
+AWS_SECRET_ACCESS_KEY=your-aws-secret       # From AWS IAM
+AWS_S3_BUCKET=your-bucket-name              # Your S3 bucket
+AWS_REGION=us-east-1                        # Your bucket’s region
 
-Collapse
+Start the Server
 
-Wrap
 
-Copy
-npm start  # Or node server.js
-Starts the server at http://localhost:5000 (default port unless overridden).
-Test Endpoints:
-Use tools like Postman or curl:
-POST http://localhost:5000/api/auth/signup with { "email": "test@example.com", "password": "password123" }.
-GET http://localhost:5000/api/candidates with Authorization: Bearer <token>.
-Deployment on Vercel
-Install Vercel CLI:
-bash
+Try It Out:
+Use Postman or curl to test:
+Signup: POST http://localhost:5000/api/auth/signup with {"email": "test@example.com", "password": "password123"}.
+Get candidates: GET http://localhost:5000/api/candidates (add your token in the Authorization header).
 
-Collapse
 
-Wrap
-
-Copy
-npm install -g vercel
-Deploy:
-bash
-
-Collapse
-
-Wrap
-
-Copy
-vercel
-Follow prompts to link your project and set environment variables in Vercel dashboard.
-Ensure vercel.json (if needed) specifies:
-json
-
-Collapse
-
-Wrap
-
-Copy
-{
-  "version": 2,
-  "builds": [{ "src": "server.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "server.js" }]
-}
-Assumptions and Limitations
+Assumptions & Stuff to Watch Out For
 Assumptions
-MongoDB: Assumes a MongoDB instance is available and configured with MONGO_URI.
-AWS S3: Assumes an S3 bucket is set up with proper IAM permissions for uploads.
-Frontend: Designed to work with crm-frontend at http://localhost:3000 (local) and https://crm-frontend-umber-rho.vercel.app (deployed).
-Token Format: Expects frontend to send Authorization: Bearer <token> for protected routes.
-Single Schema per Candidate: Assumes one candidate schema; additional schemas (e.g., for referrals) aren’t detailed.
+MongoDB: I’m assuming you’ve got MongoDB running or an Atlas URI ready to go.
+AWS S3: Figured you’ve set up a bucket and have the keys handy—I’m uploading resumes straight there.
+Frontend: Built this to work with my frontend at http://localhost:3000 or the deployed version on Vercel.
+Tokens: The frontend sends the token in the header like Bearer <token>—that’s how I lock things down.
 Limitations
-CORS: Currently allows specific origins; additional frontend deployments require updating ALLOWED_ORIGINS.
-Error Handling: Basic error middleware logs to console and returns 500—more granular error responses could be added.
-Scalability: No rate limiting or caching—suitable for small-scale use but may need optimization for high traffic.
-Resume Upload: Assumes S3 upload works flawlessly; no fallback if S3 fails (e.g., local storage).
-Security: JWT secret is hardcoded in .env—should be rotated periodically in production.
-Testing: No automated tests—manual testing via frontend or API tools required.
+CORS: It’s set for my frontend URLs—if you deploy somewhere else, you’ll need to update the ALLOWED_ORIGINS.
+Errors: I’ve got basic error logging, but it’s not super fancy—just 500s with a message. Could use more polish.
+Scale: Works fine for a small setup, but no rate limits or caching yet—might choke under heavy load.
+S3 Fails: If S3 goes down, there’s no backup plan for resumes right now.
+Security: The JWT secret’s in .env—keep it safe and change it sometimes in production!
+Testing: Haven’t added tests, so you’ll need to poke it manually with the frontend or Postman.
