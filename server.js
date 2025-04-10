@@ -30,11 +30,7 @@ app.use("/api/auth", require("./api/auth"));
 
 
 
-// Global Error Handler
-app.use((err, req, res, next) => {
-  console.error("Server error:", err.stack);
-  res.status(500).json({ message: "Internal Server Error", error: err.message });
-});
+
 
 module.exports = app;
 
